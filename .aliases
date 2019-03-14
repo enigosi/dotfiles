@@ -12,6 +12,8 @@ alias mv='mv -v'
 alias rm='rm -i -v'
 alias cp='cp -v'
 
+alias chmox='chmod -x'
+
 alias cask='brew cask' # i <3 u cask
 alias where=which # sometimes i forget
 alias brwe=brew  #typos
@@ -37,8 +39,6 @@ alias lsd='ls -l | grep "^d"' # only directories
 ###
 
 
-# `cat` with beautiful colors. requires: sudo easy_install -U Pygments
-alias c='pygmentize -O style=monokai -f console256 -g'
 
 ###
 # GIT STUFF
@@ -46,8 +46,7 @@ alias c='pygmentize -O style=monokai -f console256 -g'
 function clone() {
     git clone --depth=1 $1
     cd $(basename ${1%.*})
-    bower install &
-    npm install
+    yarn install
 }
 alias push="git push"
 

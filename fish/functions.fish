@@ -27,13 +27,12 @@ end
 function clone --description "clone something, cd into it. install it."
     git clone --depth=1 $argv[1]
     cd (basename $argv[1] | sed 's/.git$//')
-    bower install &
-    npm install
+    yarn install
 end
 
 
 function md --wraps mkdir -d "Create a directory and cd into it"
-  command mkdir $argv
+  command mkdir -p $argv
   if test $status = 0
     switch $argv[(count $argv)]
       case '-*'
@@ -44,6 +43,12 @@ function md --wraps mkdir -d "Create a directory and cd into it"
   end
 end
 
+function gz --d "Get the gzipped size"
+  echo "orig size    (bytes): "
+  cat "$argv[1]" | wc -c | gnumfmt --grouping
+  echo "gzipped size (bytes): "
+  gzip -c "$argv[1]" | wc -c | gnumfmt --grouping
+end
 
 function sudo!!
     eval sudo $history[1]
@@ -56,9 +61,12 @@ function shellswitch
 end
 
 function code
-  env VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $argv
+  env VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCodeInsiders" --args $argv
 end
 
+function upgradeyarn
+  curl -o- -L https://yarnpkg.com/install.sh | bash
+end
 
 function fuck -d 'Correct your previous console command'
     set -l exit_code $status
@@ -71,8 +79,6 @@ function fuck -d 'Correct your previous console command'
         history --delete $fucked_up_commandd
     end
 end
-
-
 
 function server -d 'Start a HTTP server in the current dir, optionally specifying the port'
     if test $argv[1]
@@ -90,15 +96,16 @@ function server -d 'Start a HTTP server in the current dir, optionally specifyin
 # for key, value in map.items():
 #   map[key] = value + \";charset=UTF-8\";
 #   SimpleHTTPServer.test()" $port
-    statik --port "$port" .
+    statikk --port "$port" .
 end
 
 
 function emptytrash -d 'Empty the Trash on all mounted volumes and the main HDD. then clear the useless sleepimage'
-    sudo rm -rfv /Volumes/*/.Trashes
-    sudo rm -v /private/var/vm/sleepimage
-    rm -rfv ~/.Trash/*
-    rm -rfv /Users/paulirish/Library/Application\ Support/stremio/Cache
-    rm -rfv /Users/paulirish/Library/Application\ Support/stremio/stremio-cache
+    sudo rm -rfv "/Volumes/*/.Trashes"
+    grm -rf "~/.Trash/*"
+    rm -rfv "/Users/paulirish/Library/Application Support/stremio/Cache"
+    rm -rfv "/Users/paulirish/Library/Application Support/stremio/stremio-cache"
+    rm -rfv "~/Library/Application Support/Spotify/PersistentCache/Update/*.tbz"
+    rm -rfv ~/Library/Caches/com.spotify.client/Data
+    rm -rfv ~/Library/Caches/Firefox/Profiles/98ne80k7.dev-edition-default/cache2
 end
-
